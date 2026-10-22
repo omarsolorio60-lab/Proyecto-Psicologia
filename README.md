@@ -1,7 +1,7 @@
 # SIGEP - Sistema Psicologia
 Sistema de gestion de pacientes de psicologia para UABC
 
-#**Equipo de desarrollo**
+**Equipo de desarrollo**
 - Omar duran
 - Miguel Tarin
 - America Martinez
