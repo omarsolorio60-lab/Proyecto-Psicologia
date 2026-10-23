@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesion Sistema Psicopedagogico UABC</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script> 
+</head>
+
+<body>
+  <main class="layout">
+    <section class="presentacion" aria-label="Información del sistema">
+      <header class="universidad">
+        <div class="logo">UABC</div>
+        <div><strong>Universidad Autónoma de Baja California</strong><span>Facultad de Ciencias de la Ingeniería y Tecnología</span></div>
+      </header>
+
+      <div class="descripcion">
+        <h1>Sistema de<br>Seguimiento<br>Psicopedagógico</h1>
+      </div>
+
+    </section>
+
+    <section class="acceso" aria-label="Inicio de sesión">
+      <div class="contenido-acceso">
+        <div class="tarjeta">
+          <h2>Iniciar sesión</h2>
+          
+          <form id="loginForm" novalidate>
+            <label for="correo">Correo institucional</label>
+            <input id="correo" name="correo" type="email" placeholder="nombre.apellido@uabc.edu.mx" autocomplete="username" required>
+            <label for="contrasena">Contraseña</label>
+            <input id="contrasena" name="contrasena" type="password" placeholder="Ingresa tu contraseña" required>
+
+            <div class="opciones">
+              <label class="recordar"><input type="checkbox" id="recordar"> Recordarme</label>
+             <!-- <a href="#" id="recuperar">¿Olvidaste tu contraseña?</a> -->
+
+            </div>
+            <button type="submit">Entrar</button>
+            <p id="mensaje" class="mensaje" role="status" aria-live="polite"></p>
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</body>
+</html>
