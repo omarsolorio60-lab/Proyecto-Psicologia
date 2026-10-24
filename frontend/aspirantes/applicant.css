@@ -214,6 +214,23 @@ body {
     font-size: 13px;
 }
 
+.btn-return {
+    display: inline-block;
+    padding: 11px 24px;
+    background-color: #00733F;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-return:hover {
+    background-color: #005d34;
+}
+
 @media (max-width: 768px) {
     .sidebar {
         position: absolute;
