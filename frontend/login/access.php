@@ -29,7 +29,7 @@
             <h2>Bienvenido a SIGEP</h2>
 
             <p class="subtitulo">Selecciona cómo deseas ingresar al sistema.</p>
-            <a class="access-choice" href="../Fronted/index.php">
+            <a class="access-choice" href="../citas/index.php">
               <strong>Soy estudiante y quiero una cita</strong>
             </a>
 
@@ -40,7 +40,7 @@
             <h2>Acceso de administrador</h2>
             <p class="subtitulo">Ingresa con tu cuenta institucional.</p>
 
-            <form id="loginForm" action="../Backend/admin_login.php" method="post">
+            <form id="loginForm" action="../../backend/admin_login.php" method="post">
               <label for="correo">Correo institucional</label>
               <input id="correo" name="correo" type="email" placeholder="nombre.apellido@uabc.edu.mx"
                 autocomplete="username" required>
