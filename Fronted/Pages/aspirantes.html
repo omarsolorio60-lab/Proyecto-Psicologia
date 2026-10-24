@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro FCITEC</title>
+    <link rel="stylesheet" href="../css/applicant.css">
+</head>
+<body>
+    <header class="top-navbar">
+        <button class="hamburger" onclick="ToggleEvent()">☰</button>
+        <div class="brand">
+            <h2>Psicopedagógico</h2>
+            <small>FCITEC - UABC</small>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav class="sidebar" id="sidebar">
+            <a href="#" class="menu-item">Registro de citas</a>
+            <a href="#" class="menu-item">Registro Aspirantes</a>
+        </nav>
+
+        <main class="content">
+            <div class="form-container">
+                <div id="registration-view">
+                    <div class="header-form">
+                        <span class="badge">Expo UABC</span>
+                        <h1>¡Conoce FCITEC!</h1>
+                        <p>Dejanos tus datos y te enviaremos informacion acerca de la carrera que te interesa. Toma menos de un minuto.</p>
+                    </div>
+
+                    <form id="aspirant-form">
+                        <div class="group">
+                            <label>Nombre completo</label>
+                            <input type="text" name="nombre" placeholder="Escribe tu nombre" required>
+                        </div>
+                        <div class="group">
+                            <label>Preparatoria de procedencia</label>
+                            <input type="text" name="preparatoria" placeholder="Ej. Cobach Plantel Nueva Tijuana" required>
+                        </div>
+                        <div class="group">
+                            <label>Correo electrónico</label>
+                            <input type="text" name="correo" placeholder="tucorreo@gmail.com" required>
+                        </div>
+                        <div class="group">
+                            <label>Carrera de interes</label>
+                            <select name="carrera" required>
+                                <option value="" disabled selected hidden>Selecciona una carrera</option>
+    
+                                <optgroup label="Ingenieria">
+                                    <option value="1">Bioingenieria</option>
+                                    <option value="2">Ingenieria en Software y Tecnologias Emergentes</option>
+                                    <option value="3">Ingenieria Aeroespacial</option>
+                                    <option value="4">Ingenieria Civil</option>
+                                    <option value="5">Ingenieria Electrica</option>
+                                    <option value="6">Ingenieria en Energias Renovables</option>
+                                    <option value="7">Ingenieria Industrial</option>
+                                    <option value="8">Ingenieria Mecanica</option>
+                                    <option value="9">Ingenieria Mecatronica</option>
+                                    <option value="10">Ingenieria en Semiconductores y Microelectronica</option>
+                                </optgroup>
+                                <optgroup label="Arquitectura y Diseño">
+                                    <option value="11">Arquitectura</option>
+                                    <option value="12">Diseño Grafico</option>
+                                    <option value="13">Diseño Industrial</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="privacy" required>
+                            <label for="privacy">Acepto el aviso de privacidad de la UABC para recibir informacion.</label>
+                        </div>
+
+                        <button type="submit" class="btn-submit">Registrarme</button>
+                    </form>
+                </div>
+                <div id="succes" class="succes">
+                    <div class="icon">✓</div>
+                    <h2>¡Gracias por registrarte!</h2>
+                    <p>Te enviaremos al correo informacion acerca de la carrera seleccionada y de las fechas de admision.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+<script src="../js/applicant.js"></script>
+</body>
+</html>
