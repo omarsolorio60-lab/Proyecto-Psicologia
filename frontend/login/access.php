@@ -33,6 +33,10 @@
               <strong>Soy estudiante y quiero una cita</strong>
             </a>
 
+            <a class="access-choice" href="../aspirantes/aspirantes.html">
+              <strong>Soy aspirante</strong>
+            </a>
+
             <button class="access-choice admin-choice" type="button" id="showAdmin"><strong>
               Soy administrador</strong></button>
           </div>

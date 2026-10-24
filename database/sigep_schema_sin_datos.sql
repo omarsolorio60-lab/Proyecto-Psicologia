@@ -43,6 +43,16 @@ CREATE TABLE `students` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE `applicants` (
+  `applicant_id` int(11) NOT NULL,
+  `full_name` varchar(150) NOT NULL,
+  `high_school` varchar(150) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `career_interest` varchar(120) NOT NULL,
+  `privacy_accepted` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 ALTER TABLE `appointments`
   ADD PRIMARY KEY (`appointment_id`),
   ADD KEY `idx_appointments_student` (`student_id`),
@@ -61,6 +71,9 @@ ALTER TABLE `students`
   ADD UNIQUE KEY `student_number` (`student_number`),
   ADD UNIQUE KEY `institutional_email` (`institutional_email`);
 
+ALTER TABLE `applicants`
+  ADD PRIMARY KEY (`applicant_id`);
+
 ALTER TABLE `appointments`
   MODIFY `appointment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
@@ -69,6 +82,9 @@ ALTER TABLE `psychologists`
 
 ALTER TABLE `students`
   MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+
+ALTER TABLE `applicants`
+  MODIFY `applicant_id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `appointments`
   ADD CONSTRAINT `fk_appointments_psychologists` FOREIGN KEY (`psychologist_id`) REFERENCES `psychologists` (`psychologist_id`),
