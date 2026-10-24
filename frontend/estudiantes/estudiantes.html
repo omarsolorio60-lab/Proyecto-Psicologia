@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estudiantes | SIGEP</title>
+  <link rel="stylesheet" href="estudiantes.css">
+  <script src="mock-estudiantes.js" defer></script>
+  <script src="estudiantes.js" defer></script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <nav class="sidebar" aria-label="Navegación principal">
+    <div class="sidebar__brand">
+      <div class="sidebar__logo">UABC</div>
+      <div>
+        <strong>SIGEP</strong>
+        <span>FCITEC · UABC</span>
+      </div>
+    </div>
+    <a class="nav-item" href="#">Inicio</a>
+    <a class="nav-item" href="#">Agenda</a>
+    <a class="nav-item nav-item--active" href="estudiantes.html" aria-current="page">Estudiantes</a>
+    <a class="nav-item" href="#">Justificantes</a>
+    <a class="nav-item" href="#">Reportes</a>
+    <a class="nav-item" href="#">Aspirantes</a>
+  </nav>
+
+  <main class="main">
+    <!-- Header -->
+    <header class="page-header">
+      <div>
+        <p class="page-header__eyebrow">Periodo 2026-2 · <span id="total-students">0</span> alumnos</p>
+        <h1>Estudiantes</h1>
+      </div>
+      <div class="page-header__actions">
+        <button class="btn btn--secondary" type="button" id="export-button">Exportar lista</button>
+        <button class="btn btn--primary" type="button" id="register-button">Registrar alumno</button>
+      </div>
+    </header>
+
+    <!-- Workflow: one card per case status, also works as a filter -->
+    <section class="workflow" id="workflow" aria-label="Flujo de trabajo"></section>
+
+    <section class="card">
+      <!-- Saved views -->
+      <div class="tabs" id="tabs" role="tablist"></div>
+
+      <!-- Search and filters -->
+      <div class="toolbar">
+        <div class="search">
+          <label class="sr-only" for="search">Buscar por nombre o matrícula</label>
+          <input id="search" type="search" placeholder="Buscar por nombre o matrícula">
+        </div>
+        <select id="filter-priority" aria-label="Prioridad">
+          <option value="">Prioridad</option>
+          <option value="high">Alta</option>
+          <option value="medium">Media</option>
+          <option value="stable">Estable</option>
+        </select>
+        <select id="filter-program" aria-label="Carrera"><option value="">Carrera</option></select>
+        <select id="filter-reason" aria-label="Motivo"><option value="">Motivo</option></select>
+        <select id="filter-psychologist" aria-label="Psicóloga"><option value="">Psicóloga</option></select>
+        <select id="filter-status" aria-label="Estado">
+          <option value="">Estado</option>
+          <option value="first_attention">Primera atención</option>
+          <option value="follow_up">En seguimiento</option>
+          <option value="referred">Canalizado</option>
+          <option value="closed">Cerrado</option>
+        </select>
+      </div>
+
+      <!-- Active filters -->
+      <div class="active-filters">
+        <strong id="results-count">0 resultados</strong>
+        <div id="filter-chips"></div>
+        <button class="link-button" type="button" id="clear-filters">Limpiar filtros</button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table class="students-table">
+          <thead>
+            <tr>
+              <th><button type="button" class="sort" data-sort="name">Alumno</button></th>
+              <th>Carrera</th>
+              <th><button type="button" class="sort" data-sort="priority">Prioridad</button></th>
+              <th>Motivo</th>
+              <th>Psicóloga</th>
+              <th><button type="button" class="sort" data-sort="lastSession">Última sesión</button></th>
+              <th><button type="button" class="sort" data-sort="nextAppointment">Próxima cita</button></th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="students-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <span id="page-info"></span>
+        <div id="page-buttons"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Register student modal (HU-02) -->
+  <dialog class="modal" id="register-modal" aria-labelledby="register-title">
+    <form id="register-form" novalidate>
+      <div class="modal__header">
+        <div>
+          <h2 id="register-title">Registrar alumno</h2>
+          <p>Los campos con * son obligatorios.</p>
+        </div>
+        <button class="modal__close" type="button" data-close aria-label="Cerrar">×</button>
+      </div>
+      <div class="modal__body">
+        <div class="form-row">
+          <div class="field">
+            <label for="enrollment">Matrícula *</label>
+            <input id="enrollment" name="enrollment" inputmode="numeric" maxlength="10" required>
+          </div>
+          <div class="field">
+            <label for="sex">Sexo *</label>
+            <select id="sex" name="sex" required>
+              <option value="">Selecciona</option>
+              <option value="F">Femenino</option>
+              <option value="M">Masculino</option>
+              <option value="NB">No binario</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="fullName">Nombre completo *</label>
+          <input id="fullName" name="fullName" maxlength="150" required>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="program">Carrera *</label>
+            <select id="program" name="program" required></select>
+          </div>
+          <div class="field">
+            <label for="semester">Semestre *</label>
+            <input id="semester" name="semester" type="number" min="1" max="12" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="reason">Motivo de atención *</label>
+            <select id="reason" name="reason" required></select>
+          </div>
+          <div class="field">
+            <label for="psychologist">Psicóloga *</label>
+            <select id="psychologist" name="psychologist" required></select>
+          </div>
+        </div>
+        <p class="form-error" id="form-error" role="alert" hidden></p>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--secondary" type="button" data-close>Cancelar</button>
+        <button class="btn btn--primary" type="submit">Guardar alumno</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>
