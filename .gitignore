@@ -1,0 +1,3 @@
+storage/horarios/*
+!storage/horarios/.gitkeep
+*.log
