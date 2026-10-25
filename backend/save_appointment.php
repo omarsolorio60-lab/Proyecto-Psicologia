@@ -1,5 +1,7 @@
 <?php
-session_start();
+require_once __DIR__.'/../config/config.php';
+require_once __DIR__.'/../config/alumno_sesion.php';
+sigep_iniciar_sesion();
 header('Content-Type: application/json; charset=utf-8');
 function fail($message, $status=422) { http_response_code($status); echo json_encode(['ok'=>false,'error'=>$message]); exit; }
 ini_set('display_errors', '0');
@@ -7,16 +9,22 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') fail('Método no permitido.',405);
 $data=json_decode(file_get_contents('php://input'),true);
 if (!is_array($data)) fail('Datos inválidos.',400);
 if (empty($_SESSION['csrf_citas']) || !is_string($data['csrf']??null) || !hash_equals($_SESSION['csrf_citas'],$data['csrf'])) fail('La sesión expiró. Actualiza la página.',403);
+// Alumno con sesión iniciada (cuenta de Google, HU-14): la cita se registra a SU nombre
+// y se ignoran los datos escritos en el formulario.
+$enSesion=isset($_SESSION['usuario_id']);
+if (!$enSesion) {
 $a=$data['alumno']??null;
 if (!is_array($a)) fail('Completa tus datos.');
 $fields=['matricula'=>20,'nombre'=>100,'apellido_paterno'=>100,'apellido_materno'=>100,'correo_institucional'=>150,'telefono'=>20,'carrera'=>120];
 foreach ($fields as $field=>$max) { if (!is_string($a[$field]??null)) fail('Datos del alumno inválidos.'); $a[$field]=trim($a[$field]); if (strlen($a[$field])>$max) fail('Un campo supera el límite permitido.'); }
 if ($a['matricula']===''||$a['nombre']===''||$a['apellido_paterno']==='') fail('Matrícula, nombre y apellido paterno son obligatorios.');
-if (!filter_var($a['correo_institucional'],FILTER_VALIDATE_EMAIL)||!preg_match('/@uabc\.edu\.mx$/i',$a['correo_institucional'])) fail('Utiliza un correo institucional UABC válido.');
+if (!preg_match(sigep_regex_matricula(),$a['matricula'])) fail('La matrícula debe tener '.MATRICULA_DIGITOS.' dígitos.');
+if (!filter_var($a['correo_institucional'],FILTER_VALIDATE_EMAIL)||!preg_match('/@'.preg_quote(DOMINIO_PERMITIDO,'/').'$/i',$a['correo_institucional'])) fail('Utiliza un correo institucional UABC válido.');
 $semestre=$a['semestre']??'';
 if (!is_string($semestre)) fail('Semestre inválido.');
 $semestre=trim($semestre);
-if ($semestre!==''&&(!ctype_digit($semestre)||(int)$semestre<1||(int)$semestre>20)) fail('El semestre debe estar entre 1 y 20.');
+if ($semestre!==''&&(!ctype_digit($semestre)||(int)$semestre<1||(int)$semestre>SEMESTRE_MAX)) fail('El semestre debe estar entre 1 y '.SEMESTRE_MAX.'.');
+}
 $fecha=$data['fecha']??'';$hora=$data['hora']??'';$modalidad=$data['modalidad']??'';$motivo=$data['motivo']??'';$detalle=$data['detalle']??'';
 if (!is_string($fecha)||!is_string($hora)||!is_string($modalidad)||!is_string($motivo)||!is_string($detalle)) fail('Datos de cita inválidos.');
 $detalle=trim($detalle);
@@ -45,12 +53,23 @@ try {
     $assigned=null;
     foreach ($psych as $id) {if (!in_array((int)$id,$busy,true)) {$assigned=(int)$id;break;}}
     if ($assigned===null) { $pdo->rollBack(); fail('Este horario ya está completo. Selecciona otra hora.',409); }
+    if ($enSesion) {
+        $sesion=sigep_alumno_en_sesion($pdo);
+        if (!$sesion) { $pdo->rollBack(); fail('Tu sesión ya no es válida. Vuelve a iniciar sesión o cierra sesión para pedir la cita sin cuenta.',401); }
+        $alumnoId=(int)$sesion['student_id'];
+    } else {
     // Bloquea el registro del estudiante mientras se determina si ya existe.
-    $stmt=$pdo->prepare('SELECT student_id, institutional_email FROM students WHERE student_number = ? FOR UPDATE');
+    $stmt=$pdo->prepare('SELECT student_id, user_id, institutional_email FROM students WHERE student_number = ? FOR UPDATE');
     $stmt->execute([$a['matricula']]);
     $existing=$stmt->fetch(PDO::FETCH_ASSOC);
     if ($existing) {
-        if (strcasecmp(trim($existing['institutional_email']), $a['correo_institucional']) !== 0) {
+        if ($existing['user_id']!==null) {
+            // Ese alumno ya creó su cuenta con Google: debe entrar con ella (más seguro que escribir matrícula y correo).
+            $pdo->rollBack();
+            fail('Esta matrícula ya tiene una cuenta. Inicia sesión con tu cuenta institucional de Google para solicitar tu cita.',409);
+        }
+        // Si la psicóloga lo registró sin correo, se acepta la cita con su matrícula (el correo no se modifica).
+        if ($existing['institutional_email']!==null && strcasecmp(trim($existing['institutional_email']), $a['correo_institucional']) !== 0) {
             $pdo->rollBack();
             fail('La matrícula ya está registrada con otro correo institucional. Verifica tus datos o solicita ayuda a administración.',409);
         }
@@ -63,9 +82,10 @@ try {
             $pdo->rollBack();
             fail('Este correo institucional ya pertenece a otra matrícula. Verifica tus datos.',409);
         }
-        $stmt=$pdo->prepare('INSERT INTO students (student_number,first_name,paternal_last_name,maternal_last_name,institutional_email,phone,major,semester) VALUES (?,?,?,?,?,?,?,?)');
+        $stmt=$pdo->prepare("INSERT INTO students (student_number,first_name,paternal_last_name,maternal_last_name,institutional_email,phone,major,semester,registration_source) VALUES (?,?,?,?,?,?,?,?,'Cita')");
         $stmt->execute([$a['matricula'],$a['nombre'],$a['apellido_paterno'],$a['apellido_materno']?:null,$a['correo_institucional'],$a['telefono']?:null,$a['carrera']?:null,$semestre===''?null:(int)$semestre]);
         $alumnoId=(int)$pdo->lastInsertId();
+    }
     }
     $stmt=$pdo->prepare("INSERT INTO appointments (student_id,psychologist_id,requested_date,appointment_mode,student_reason,status,registration_source) VALUES (?,?,?,?,?,'Solicitada','Alumno')");
     $stmt->execute([$alumnoId,$assigned,$dt->format('Y-m-d H:i:s'),$modalidad,$texto]);

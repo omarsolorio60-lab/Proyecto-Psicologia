@@ -29,6 +29,10 @@
             <h2>Bienvenido a SIGEP</h2>
 
             <p class="subtitulo">Selecciona cómo deseas ingresar al sistema.</p>
+            <a class="access-choice" href="../registro/index.html">
+              <strong>Soy estudiante: crear mi cuenta o entrar con Google</strong>
+            </a>
+
             <a class="access-choice" href="../citas/index.php">
               <strong>Soy estudiante y quiero una cita</strong>
             </a>

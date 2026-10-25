@@ -340,9 +340,9 @@ form.addEventListener("submit", (event) => {
 
   const data = Object.fromEntries(new FormData(form));
 
-  if (!/^\d{7,10}$/.test(data.enrollment)) {
+  if (!/^\d{7}$/.test(data.enrollment)) { // misma regla que config/config.php (MATRICULA_DIGITOS)
     $("#enrollment").closest(".field").classList.add("field--error");
-    showFormError("La matrícula debe tener de 7 a 10 dígitos.");
+    showFormError("La matrícula debe tener 7 dígitos.");
     return;
   }
   if (students.some((s) => s.enrollment === data.enrollment)) {
