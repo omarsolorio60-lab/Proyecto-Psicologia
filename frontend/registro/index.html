@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#004d2b">
+  <title>Crear cuenta · SIGEP FCITEC</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23e0971a'/%3E%3Ctext x='16' y='21' font-size='11' font-weight='800' text-anchor='middle' fill='%23004d2b' font-family='Arial'%3EUABC%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="registro.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo" aria-hidden="true">UABC</div>
+    <div class="brand"><strong>Psicopedagógico</strong><span>FCITEC · UABC</span></div>
+  </header>
+
+  <main class="container">
+    <!-- Cargando -->
+    <section id="v-carga"><p class="muted">Cargando…</p></section>
+
+    <!-- 1. Acceso con Google -->
+    <section id="v-acceso" hidden>
+      <h1 tabindex="-1">Crea tu cuenta</h1>
+      <p class="lead">Solicita citas con el área psicopedagógica desde tu celular, sin ir en persona. Usa tu cuenta institucional de Google.</p>
+
+      <div id="alerta-acceso" class="alert alert-error" role="alert" hidden></div>
+
+      <div id="google-box" hidden>
+        <div id="g-btn" class="g-btn"></div>
+      </div>
+
+      <form id="dev-form" class="card dev" hidden novalidate>
+        <p class="dev-tag">Modo de pruebas · sin Google</p>
+        <p class="muted small">Escribe un correo para simular el inicio de sesión. Solo se aceptan <strong>@uabc.edu.mx</strong>.</p>
+        <label for="dev-email">Correo institucional</label>
+        <input id="dev-email" type="email" inputmode="email" autocomplete="email" placeholder="nombre.apellido@uabc.edu.mx" required>
+        <button class="btn btn-primary" type="submit">Entrar sin Google (pruebas)</button>
+      </form>
+
+      <p class="muted small center">Usa tu correo <strong>@uabc.edu.mx</strong>. La atención es confidencial.</p>
+      <p class="center"><a class="link" href="../login/access.php">← Volver a las opciones de acceso</a></p>
+    </section>
+
+    <!-- 2. Formulario de registro -->
+    <section id="v-registro" hidden>
+      <h1 tabindex="-1">Completa tu perfil</h1>
+      <p class="lead">Estos datos nos ayudan a atenderte. Todos son obligatorios, excepto el apellido materno y el horario.</p>
+
+      <div id="alerta-registro" class="alert alert-error" role="alert" hidden></div>
+
+      <form id="form-registro" novalidate>
+        <div class="field">
+          <label for="correo">Correo institucional</label>
+          <input id="correo" type="email" readonly>
+        </div>
+
+        <div class="field">
+          <label for="matricula">Matrícula</label>
+          <input id="matricula" name="matricula" inputmode="numeric" maxlength="7" autocomplete="off" placeholder="1234567" aria-describedby="e-matricula">
+          <p class="err" id="e-matricula"></p>
+        </div>
+
+        <div class="field">
+          <label for="nombre">Nombre(s)</label>
+          <input id="nombre" name="nombre" maxlength="100" autocomplete="given-name" placeholder="Tu nombre" aria-describedby="e-nombre">
+          <p class="err" id="e-nombre"></p>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="apellido_paterno">Apellido paterno</label>
+            <input id="apellido_paterno" name="apellido_paterno" maxlength="100" autocomplete="family-name" aria-describedby="e-apellido_paterno">
+            <p class="err" id="e-apellido_paterno"></p>
+          </div>
+          <div class="field">
+            <label for="apellido_materno">Apellido materno</label>
+            <input id="apellido_materno" name="apellido_materno" maxlength="100" placeholder="Opcional" aria-describedby="e-apellido_materno">
+            <p class="err" id="e-apellido_materno"></p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="sexo">Sexo</label>
+          <select id="sexo" name="sexo" aria-describedby="e-sexo"></select>
+          <p class="err" id="e-sexo"></p>
+        </div>
+
+        <div class="field">
+          <label for="telefono">Teléfono (10 dígitos)</label>
+          <input id="telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="686 123 4567" aria-describedby="e-telefono">
+          <p class="err" id="e-telefono"></p>
+        </div>
+
+        <div class="field">
+          <label for="programa_id">Carrera</label>
+          <select id="programa_id" name="programa_id" aria-describedby="e-programa_id"></select>
+          <p class="err" id="e-programa_id"></p>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="semestre">Semestre</label>
+            <select id="semestre" name="semestre" aria-describedby="e-semestre"></select>
+            <p class="err" id="e-semestre"></p>
+          </div>
+          <div class="field">
+            <label for="grupo">Grupo</label>
+            <input id="grupo" name="grupo" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="551" aria-describedby="e-grupo">
+            <p class="err" id="e-grupo"></p>
+          </div>
+        </div>
+
+        <fieldset class="field horario">
+          <legend>Foto de tu horario <span class="opt">(opcional)</span></legend>
+          <p class="muted small">Nos sirve para agendar tu cita fuera de tus clases. JPG, PNG o PDF de hasta <span id="max-mb">5</span> MB.</p>
+          <div class="btn-row">
+            <button type="button" class="btn btn-secondary" id="btn-archivo">Elegir archivo</button>
+            <button type="button" class="btn btn-secondary" id="btn-camara" hidden>Tomar foto</button>
+          </div>
+          <input id="in-archivo" type="file" accept="image/jpeg,image/png,application/pdf,.jpg,.jpeg,.png,.pdf" hidden>
+          <input id="in-camara" type="file" accept="image/jpeg,image/png" capture="environment" hidden>
+          <div id="preview" class="preview" hidden>
+            <img id="preview-img" alt="Vista previa de tu horario" hidden>
+            <p id="preview-name" class="small"></p>
+            <button type="button" class="link" id="btn-quitar">Quitar</button>
+          </div>
+          <p class="err" id="e-horario"></p>
+        </fieldset>
+
+        <button id="btn-enviar" class="btn btn-primary" type="submit">Crear mi cuenta</button>
+      </form>
+    </section>
+
+    <!-- 3. Listo -->
+    <section id="v-listo" hidden>
+      <div class="check" aria-hidden="true">✓</div>
+      <h1 tabindex="-1" id="listo-titulo">¡Tu cuenta está lista!</h1>
+      <p class="lead" id="listo-texto"></p>
+      <div class="card" id="resumen"></div>
+      <a class="btn btn-primary" href="../citas/index.php">Solicitar cita</a>
+      <button class="btn btn-ghost" type="button" id="btn-salir">Cerrar sesión</button>
+    </section>
+  </main>
+
+  <script src="registro.js" defer></script>
+</body>
+</html>

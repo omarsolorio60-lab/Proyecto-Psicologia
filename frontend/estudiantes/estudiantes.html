@@ -118,15 +118,16 @@
         <div class="form-row">
           <div class="field">
             <label for="enrollment">Matrícula *</label>
-            <input id="enrollment" name="enrollment" inputmode="numeric" maxlength="10" required>
+            <input id="enrollment" name="enrollment" inputmode="numeric" maxlength="7" required>
           </div>
           <div class="field">
             <label for="sex">Sexo *</label>
             <select id="sex" name="sex" required>
               <option value="">Selecciona</option>
-              <option value="F">Femenino</option>
-              <option value="M">Masculino</option>
-              <option value="NB">No binario</option>
+              <!-- Mismos valores que students.sex en la base de datos -->
+              <option value="M">Mujer</option>
+              <option value="H">Hombre</option>
+              <option value="ND">Prefiero no decirlo</option>
             </select>
           </div>
         </div>
