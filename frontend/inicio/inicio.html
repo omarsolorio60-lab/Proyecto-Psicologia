@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio | SIGEP Psicopedagógico FCITEC</title>
+  <link rel="stylesheet" href="inicio.css">
+</head>
+
+<body>
+  <!-- Menu lateral -->
+  <nav class="sidebar" aria-label="Navegación principal">
+    <div class="sidebar__brand">
+      <div class="sidebar__logo">UABC</div>
+      <div>
+        <strong>SIGEP</strong>
+        <span>FCITEC  UABC</span>
+      </div>
+    </div>
+    <a class="nav-item nav-item--active" href="inicio.html">Inicio</a>
+    <a class="nav-item" href="#">Agenda</a>
+    <a class="nav-item" href="../estudiantes/estudiantes.html">Estudiantes</a>
+    <a class="nav-item" href="#">Justificantes</a>
+    <a class="nav-item" href="#">Reportes</a>
+    <a class="nav-item" href="#">Aspirantes</a>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main">
+    <header class="header">
+      <p class="date" id="current-date">Lunes 19 de octubre, 2026</p>
+      <h1>Buenos días, <span id="user-greeting">Aida</span></h1>
+    </header>
+
+    <!-- Tarjetas  del header -->
+    <section class="stats">
+      <div class="card-stats">
+        <div class="card-green"></div>
+        <h3>Citas de hoy</h3>
+        <div class="stat-number" id="stat-citas-hoy">5</div>
+        <p class="detail" id="stat-citas-detalle">2 presenciales · 3 en línea</p>
+      </div>
+
+      <div class="card-stats">
+        <div class="card-green"></div>
+        <h3>Alumnos en seguimiento</h3>
+        <div class="stat-number" id="stat-alumnos-seguimiento">19</div>
+        <p class="detail" id="stat-seguimiento-detalle">Periodo 2026-2</p>
+      </div>
+
+      <div class="card-stats">
+        <div class="card-red"></div>
+        <h3>Casos prioritarios</h3>
+        <div class="stat-number" id="stat-casos-prioritarios">3</div>
+        <p class="detail" id="stat-prioritarios-detalle">Requieren atención esta semana</p>
+      </div>
+
+      <div class="card-stats">
+        <div class="card-yellow"></div>
+        <h3>Justificantes pendientes</h3>
+        <div class="stat-number" id="stat-justificantes">10</div>
+        <p class="detail" id="stat-justificantes-detalle">Solicitudes por revisar</p>
+      </div>
+    </section>
+
+    <!-- Panel de informacion (Citas y Casos prioritarios) -->
+    <section class="content">
+
+      <!-- Panel de Citas de hoy -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Citas de hoy</h2>
+          <a href="#" class="link">Ver Agenda</a>
+        </div>
+
+        <!-- Contenedor de citas: ejemplos para poder modificar css-->
+        <div class="list-container" id="citas-container">
+          <div class="list-item">
+            <div class="time">09:00</div>
+            <div class="info">
+              <h4>Juan Pérez Martínez</h4>
+              <p>1234567 · Ing. Software · Seguimiento académico</p>
+            </div>
+            <div class="tag">Presencial</div>
+          </div>
+
+          <div class="list-item">
+            <div class="time">10:30</div>
+            <div class="info">
+              <h4>María Sánchez Ruiz</h4>
+              <p>1245789 · Bioingeniería · Situación personal</p>
+            </div>
+            <div class="tag">En línea</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel de Casos prioritarios -->
+      <div class="cases-panel">
+        <div class="panel-header">
+          <h2>Casos prioritarios</h2>
+          <a href="../estudiantes/estudiantes.html" class="link">Ver todos</a>
+        </div>
+
+        <!-- Deje 2 ejemplos igual para que peudas modificar el css -->
+        <div class="list-container" id="casos-container">
+          <div class="case-item">
+            <div class="info">
+              <h4>J.P.M · 1234567</h4>
+              <p>Crisis emocional · hace 2 días</p>
+            </div>
+            <div class="actions">
+              <span class="priority-badge priority-high"><i class="circle"></i> Prioridad Alta</span>
+              <button class="btn-outline" type="button"><i class="row"></i> Canalizar</button>
+            </div>
+          </div>
+
+          <div class="case-item">
+            <div class="info">
+              <h4>M.S.R · 1245789</h4>
+              <p>Seguimiento académico · hace 3 días</p>
+            </div>
+            <div class="actions">
+              <span class="priority-badge priority-med"><i class="circle"></i> Seguimiento</span>
+              <button class="btn-outline" type="button"><i class="row"></i> Canalizar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+</body>
+
+</html>
