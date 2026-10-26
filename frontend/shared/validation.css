@@ -1,0 +1,45 @@
+/* Estilos compartidos para mensajes de validación (aspirantes, citas, estudiantes) */
+.field-error {
+  margin: 6px 0 0;
+  padding: 0;
+  color: #c62828;
+  font-size: 12.5px;
+  line-height: 1.4;
+  font-weight: 600;
+  text-align: left;
+}
+
+.field-error:empty {
+  display: none;
+}
+
+.field>.field-error {
+  margin: 0;
+}
+
+.input-invalid,
+.input-invalid:focus {
+  border-color: #c62828 !important;
+  background-color: #fff8f8 !important;
+}
+
+/* Botón de regresar reutilizable */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 8px 14px;
+  border: 1px solid #00733f;
+  border-radius: 8px;
+  background: #fff;
+  color: #00733f;
+  font-size: 13px;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-back:hover {
+  background: #e3f6ea;
+}

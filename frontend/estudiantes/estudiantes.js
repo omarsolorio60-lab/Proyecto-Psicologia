@@ -201,6 +201,16 @@ function render() {
 
 // Fill the <select> options from the catalogs
 function fillSelect(select, values, firstOption) {
+  // El selector de carrera del registro usa los mismos grupos que Aspirantes.
+  if (select.id === "program") {
+    const engineering = values.slice(0, 10);
+    const design = values.slice(10);
+    const group = (label, items) => `<optgroup label="${label}">${items.map((v) => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("")}</optgroup>`;
+    select.innerHTML = (firstOption ? `<option value="">${firstOption}</option>` : "")
+      + group("Ingenieria", engineering)
+      + group("Arquitectura y Diseño", design);
+    return;
+  }
   const options = values.map((v) => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
   select.innerHTML = (firstOption ? `<option value="">${firstOption}</option>` : "") + options;
 }
@@ -323,38 +333,54 @@ function showFormError(message) {
 function hideFormError() {
   $("#form-error").hidden = true;
   form.querySelectorAll(".field--error").forEach((f) => f.classList.remove("field--error"));
+  SIGEP_VALID.clearAll(form);
 }
+
+// Validadores por campo: cada mensaje indica cual campo fallo
+const V = SIGEP_VALID;
+const validators = {
+  enrollment: () => V.matricula($("#enrollment").value),
+  sex: () => V.requerido($("#sex").value, "Selecciona el sexo."),
+  fullName: () => V.nombre($("#fullName").value, "El nombre completo"),
+  program: () => V.requerido($("#program").value, "Selecciona la carrera."),
+  semester: () => V.semestre($("#semester").value, 12),
+  reason: () => V.requerido($("#reason").value, "Selecciona el motivo de atención."),
+  psychologist: () => V.requerido($("#psychologist").value, "Selecciona la psicóloga."),
+};
+
+V.bindMatricula($("#enrollment"));
+V.bindNombre($("#fullName"), "El nombre completo");
+["sex", "program", "semester", "reason", "psychologist"].forEach((id) => V.bindGeneric($(`#${id}`), validators[id]));
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  hideFormError();
+  $("#form-error").hidden = true;
+  form.querySelectorAll(".field--error").forEach((f) => f.classList.remove("field--error"));
 
-  // Criteria 2 and 3: required fields must be filled before saving
-  const missing = [...form.querySelectorAll("[required]")].filter((input) => input.value.trim() === "");
-  if (missing.length > 0) {
-    missing.forEach((input) => input.closest(".field").classList.add("field--error"));
-    showFormError("Completa los campos obligatorios.");
-    missing[0].focus();
+  // Todos los campos son obligatorios y se validan uno por uno
+  const items = Object.keys(validators).map((id) => ({ input: $(`#${id}`), validate: validators[id] }));
+  const errors = V.validateAll(items);
+
+  // La matrícula no puede estar repetida
+  if (!errors.length && students.some((s) => s.enrollment === $("#enrollment").value.trim())) {
+    V.setError($("#enrollment"), "La matrícula ya está registrada.");
+    $("#enrollment").focus();
+    errors.push("La matrícula ya está registrada.");
+  }
+
+  if (errors.length > 0) {
+    items.forEach((it) => { if (it.input.classList.contains("input-invalid")) it.input.closest(".field").classList.add("field--error"); });
+    const fields = items.filter((it) => it.input.classList.contains("input-invalid")).map((it) => it.input.closest(".field").querySelector("label").textContent.replace(" *", ""));
+    showFormError(`Corrige los campos marcados: ${fields.join(", ")}.`);
     return;
   }
 
   const data = Object.fromEntries(new FormData(form));
 
-  if (!/^\d{7,10}$/.test(data.enrollment)) {
-    $("#enrollment").closest(".field").classList.add("field--error");
-    showFormError("La matrícula debe tener de 7 a 10 dígitos.");
-    return;
-  }
-  if (students.some((s) => s.enrollment === data.enrollment)) {
-    $("#enrollment").closest(".field").classList.add("field--error");
-    showFormError("Esta matrícula ya está registrada.");
-    return;
-  }
-
   // Criterion 1: save the student's general data
   students.push({
     id: Date.now(),
-    enrollment: data.enrollment,
+    enrollment: data.enrollment.trim(),
     name: data.fullName.trim(),
     program: data.program,
     semester: Number(data.semester),
