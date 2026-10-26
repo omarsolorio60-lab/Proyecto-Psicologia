@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Estudiantes | SIGEP</title>
   <link rel="stylesheet" href="estudiantes.css">
+  <link rel="stylesheet" href="../shared/validation.css">
   <script src="mock-estudiantes.js" defer></script>
+  <script src="../shared/validation.js" defer></script>
   <script src="estudiantes.js" defer></script>
 </head>
 <body>
@@ -30,6 +32,7 @@
     <!-- Header -->
     <header class="page-header">
       <div>
+        <a class="btn-back" href="../login/access.php">← Regresar</a>
         <p class="page-header__eyebrow">Periodo 2026-2 · <span id="total-students">0</span> alumnos</p>
         <h1>Estudiantes</h1>
       </div>
@@ -118,7 +121,7 @@
         <div class="form-row">
           <div class="field">
             <label for="enrollment">Matrícula *</label>
-            <input id="enrollment" name="enrollment" inputmode="numeric" maxlength="10" required>
+            <input id="enrollment" name="enrollment" required placeholder="Ej. 1270021">
           </div>
           <div class="field">
             <label for="sex">Sexo *</label>

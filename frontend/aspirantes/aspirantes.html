@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro FCITEC</title>
     <link rel="stylesheet" href="applicant.css">
+    <link rel="stylesheet" href="../shared/validation.css">
 </head>
 
 <body>
@@ -34,14 +35,14 @@
                             menos de un minuto.</p>
                     </div>
 
-                    <form id="aspirant-form">
+                    <form id="aspirant-form" novalidate>
                         <div class="group">
                             <label>Nombre completo</label>
-                            <input type="text" name="nombre" placeholder="Escribe tu nombre" required>
+                            <input type="text" name="nombre" placeholder="Escribe tu nombre" maxlength="150" required>
                         </div>
                         <div class="group">
                             <label>Preparatoria de procedencia</label>
-                            <input type="text" name="preparatoria" placeholder="Ej. Cobach Plantel Nueva Tijuana"
+                            <input type="text" name="preparatoria" placeholder="Ej. Cobach Plantel 16 o CBTIS 116"
                                 required>
                         </div>
                         <div class="group">
@@ -79,7 +80,10 @@
                                 informacion.</label>
                         </div>
 
-                        <button type="submit" class="btn-submit">Registrarme</button>
+                        <div class="form-actions">
+                            <a href="../login/access.php" class="btn-regresar">Regresar</a>
+                            <button type="submit" class="btn-submit">Registrarme</button>
+                        </div>
                     </form>
                 </div>
                 <div id="succes" class="succes">
@@ -92,6 +96,7 @@
             </div>
         </main>
     </div>
+    <script src="../shared/validation.js"></script>
     <script src="applicant.js"></script>
 </body>
 
