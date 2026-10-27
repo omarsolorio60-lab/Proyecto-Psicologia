@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Tijuana');
 session_start();
 header('Content-Type: application/json; charset=utf-8');
 function fail($message, $status = 422)
@@ -53,7 +54,8 @@ if (!is_string($fecha) || !is_string($hora) || !is_string($modalidad) || !is_str
 $detalle = trim($detalle);
 $dt = DateTimeImmutable::createFromFormat('!Y-m-d H:i', "$fecha $hora");
 $validDate = $dt && $dt->format('Y-m-d H:i') === "$fecha $hora" && $dt > new DateTimeImmutable('now');
-$validHour = (bool) preg_match('/^(0[8-9]|1[0-5]):(00|30)$|^16:00$/D', $hora);
+// Solo hay tres horarios de atencion al dia: 09:00, 11:00 y 13:00
+$validHour = in_array($hora, ['09:00', '11:00', '13:00'], true);
 if (!$validDate || !$validHour || !in_array($modalidad, ['Presencial', 'Virtual'], true) || !in_array($motivo, ['Académico', 'Personal o emocional', 'Orientación vocacional', 'Justificante', 'Otro'], true) || strlen($detalle) > 180)
     fail('Revisa el motivo, modalidad, fecha y horario.');
 $texto = $motivo . ($detalle !== '' ? ' - ' . $detalle : '');
@@ -102,16 +104,6 @@ try {
     } else {
         $pdo->rollBack();
         fail('Tu cuenta no coincide. Vuelve a verificarla.', 403);
-        // Evita vincular una matrícula nueva al correo de otro estudiante.
-        $stmt = $pdo->prepare('SELECT student_id FROM students WHERE institutional_email = ? LIMIT 1');
-        $stmt->execute([$a['correo_institucional']]);
-        if ($stmt->fetch()) {
-            $pdo->rollBack();
-            fail('Este correo institucional ya pertenece a otra matrícula. Verifica tus datos.', 409);
-        }
-        $stmt = $pdo->prepare('INSERT INTO students (student_number,first_name,paternal_last_name,maternal_last_name,institutional_email,phone,major,semester) VALUES (?,?,?,?,?,?,?,?)');
-        $stmt->execute([$a['matricula'], $a['nombre'], $a['apellido_paterno'], $a['apellido_materno'] ?: null, $a['correo_institucional'], $a['telefono'] ?: null, $a['carrera'] ?: null, $semestre === '' ? null : (int) $semestre]);
-        $alumnoId = (int) $pdo->lastInsertId();
     }
     $stmt = $pdo->prepare("INSERT INTO appointments (student_id,psychologist_id,requested_date,appointment_mode,student_reason,status,registration_source) VALUES (?,?,?,?,?,'Solicitada','Alumno')");
     $stmt->execute([$alumnoId, $assigned, $dt->format('Y-m-d H:i:s'), $modalidad, $texto]);

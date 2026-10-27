@@ -49,11 +49,15 @@ if (!$privacidad) {
 try {
     require __DIR__ . '/../config/database_connection.php';
 
+    $majorStmt = $pdo->prepare('SELECT major_id FROM majors WHERE name = ? AND active = 1');
+    $majorStmt->execute([$carrera]);
+    $majorId = $majorStmt->fetchColumn() ?: null;
+
     $stmt = $pdo->prepare(
-        "INSERT INTO applicants (full_name, high_school, email, career_interest, privacy_accepted)
-         VALUES (?, ?, ?, ?, 1)"
+        "INSERT INTO applicants (full_name, high_school, email, career_interest, major_id, privacy_accepted)
+         VALUES (?, ?, ?, ?, ?, 1)"
     );
-    $stmt->execute([$nombre, $preparatoria, $correo, $carrera]);
+    $stmt->execute([$nombre, $preparatoria, $correo, $carrera, $majorId]);
 
     echo json_encode([
         'ok' => true,

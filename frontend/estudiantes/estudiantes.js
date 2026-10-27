@@ -5,6 +5,29 @@
 const PAGE_SIZE = 8;
 const CURRENT_PSYCHOLOGIST = "A. López"; // TODO: take it from the session when login exists
 
+// Catalogs (PROGRAMS and PSYCHOLOGISTS are filled from the backend at start)
+let PROGRAMS = [];
+let PSYCHOLOGISTS = [];
+let students = [];
+
+// cases.reason in the database -> text shown on the page
+const REASON_LABELS = {
+  academic: "Académico",
+  personal: "Personal o emocional",
+  vocational: "Orientación vocacional",
+  excuse: "Justificante",
+};
+const REASONS = Object.values(REASON_LABELS);
+
+const STATUS_LABELS = {
+  first_attention: "Primera atención",
+  follow_up: "En seguimiento",
+  referred: "Canalizado",
+  closed: "Cerrado",
+};
+
+const PRIORITY_LABELS = { high: "Prioridad alta", medium: "Prioridad media", stable: "Estable" };
+
 const state = {
   view: "all",          // saved view (tab)
   search: "",
@@ -341,7 +364,10 @@ const V = SIGEP_VALID;
 const validators = {
   enrollment: () => V.matricula($("#enrollment").value),
   sex: () => V.requerido($("#sex").value, "Selecciona el sexo."),
-  fullName: () => V.nombre($("#fullName").value, "El nombre completo"),
+  fullName: () => V.nombre($("#fullName").value, "El nombre completo")
+    || ($("#fullName").value.trim().split(/\s+/).length < 2 ? "Escribe el nombre y al menos un apellido." : ""),
+  email: () => V.correo($("#email").value, { uabc: true }),
+  phone: () => V.telefono($("#phone").value),
   program: () => V.requerido($("#program").value, "Selecciona la carrera."),
   semester: () => V.semestre($("#semester").value, 12),
   reason: () => V.requerido($("#reason").value, "Selecciona el motivo de atención."),
@@ -350,9 +376,17 @@ const validators = {
 
 V.bindMatricula($("#enrollment"));
 V.bindNombre($("#fullName"), "El nombre completo");
-["sex", "program", "semester", "reason", "psychologist"].forEach((id) => V.bindGeneric($(`#${id}`), validators[id]));
+V.bindTelefono($("#phone"));
+["sex", "email", "program", "semester", "reason", "psychologist"].forEach((id) => V.bindGeneric($(`#${id}`), validators[id]));
 
-form.addEventListener("submit", (event) => {
+// Students and catalogs from the backend (students_list.php)
+async function loadStudents() {
+  const list = await getJson("students_list.php");
+  students = list.students.map((s) => ({ ...s, reason: REASON_LABELS[s.reason] ?? s.reason }));
+  PSYCHOLOGISTS = list.psychologists;
+}
+
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
   $("#form-error").hidden = true;
   form.querySelectorAll(".field--error").forEach((f) => f.classList.remove("field--error"));
@@ -376,22 +410,29 @@ form.addEventListener("submit", (event) => {
   }
 
   const data = Object.fromEntries(new FormData(form));
+  const reasonCode = Object.keys(REASON_LABELS).find((code) => REASON_LABELS[code] === data.reason);
 
-  // Criterion 1: save the student's general data
-  students.push({
-    id: Date.now(),
-    enrollment: data.enrollment.trim(),
-    name: data.fullName.trim(),
-    program: data.program,
-    semester: Number(data.semester),
-    priority: "stable",
-    reason: data.reason,
-    psychologist: data.psychologist,
-    lastSession: null,
-    nextAppointment: null,
-    status: "first_attention",
-    category: data.reason === "Académico" ? "academic" : "emotional",
-  });
+  // Criterion 1: save the student's general data (students + a new case)
+  const saveButton = form.querySelector('button[type="submit"]');
+  saveButton.disabled = true;
+  try {
+    await postJson("create_student.php", {
+      enrollment: data.enrollment.trim(),
+      fullName: data.fullName.trim(),
+      email: data.email.trim(),
+      phone: data.phone.trim(),
+      program: data.program,
+      semester: Number(data.semester),
+      reason: reasonCode,
+      psychologist: data.psychologist,
+    });
+    await loadStudents();
+  } catch (error) {
+    showFormError(error.message);
+    return;
+  } finally {
+    saveButton.disabled = false;
+  }
 
   modal.close();
   state.view = "all";
@@ -400,10 +441,26 @@ form.addEventListener("submit", (event) => {
 });
 
 // ===== 5) Start =====
-fillSelect($("#filter-program"), PROGRAMS, "Carrera");
-fillSelect($("#filter-reason"), REASONS, "Motivo");
-fillSelect($("#filter-psychologist"), PSYCHOLOGISTS, "Psicóloga");
-fillSelect($("#program"), PROGRAMS, "Selecciona");
-fillSelect($("#reason"), REASONS, "Selecciona");
-fillSelect($("#psychologist"), PSYCHOLOGISTS, "Selecciona");
-render();
+async function init() {
+  let loadError = null;
+  try {
+    const [catalog] = await Promise.all([getJson("majors_list.php"), loadStudents()]);
+    PROGRAMS = catalog.majors.map((m) => m.name);
+  } catch (error) {
+    loadError = error;
+  }
+
+  fillSelect($("#filter-program"), PROGRAMS, "Carrera");
+  fillSelect($("#filter-reason"), REASONS, "Motivo");
+  fillSelect($("#filter-psychologist"), PSYCHOLOGISTS, "Psicóloga");
+  fillSelect($("#program"), PROGRAMS, "Selecciona");
+  fillSelect($("#reason"), REASONS, "Selecciona");
+  fillSelect($("#psychologist"), PSYCHOLOGISTS, "Selecciona");
+  render();
+
+  if (loadError) {
+    $("#students-body").innerHTML = `<tr class="empty-row"><td colspan="8">${escapeHtml(loadError.message)}</td></tr>`;
+  }
+}
+
+init();

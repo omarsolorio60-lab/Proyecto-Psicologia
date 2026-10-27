@@ -4,128 +4,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicio | SIGEP Psicopedagógico FCITEC</title>
+  <title>Inicio | SIGEP Psicopedag&oacute;gico FCITEC</title>
   <link rel="stylesheet" href="inicio.css">
+  <script src="../shared/api.js" defer></script>
+  <script src="inicio.js" defer></script>
 </head>
 
 <body>
   <!-- Menu lateral -->
-  <nav class="sidebar" aria-label="Navegación principal">
+  <nav class="sidebar" aria-label="Navegaci&oacute;n principal">
     <div class="sidebar__brand">
       <div class="sidebar__logo">UABC</div>
       <div>
         <strong>SIGEP</strong>
-        <span>FCITEC · UABC</span>
+        <span>FCITEC &middot; UABC</span>
       </div>
     </div>
-    <a class="nav-item nav-item--active" href="inicio.html">Inicio</a>
+    <a class="nav-item nav-item--active" href="inicio.html" aria-current="page">Inicio</a>
     <a class="nav-item" href="#">Agenda</a>
     <a class="nav-item" href="../estudiantes/estudiantes.html">Estudiantes</a>
     <a class="nav-item" href="#">Justificantes</a>
     <a class="nav-item" href="#">Reportes</a>
-    <a class="nav-item" href="#">Aspirantes</a>
+    <a class="nav-item" href="../aspirantes/aspirantes.html">Aspirantes</a>
+    <a class="nav-item nav-item--logout" href="../../backend/admin_logout.php">Cerrar sesi&oacute;n</a>
   </nav>
 
-  <!-- Contenido principal -->
+  <!-- Contenido principal: inicio.js llena los datos desde dashboard.php -->
   <main class="main">
     <header class="header">
-      <p class="date" id="current-date">Lunes 19 de octubre, 2026</p>
-      <h1>Buenos días, <span id="user-greeting">Aida</span></h1>
+      <p class="date" id="current-date"></p>
+      <h1><span id="greeting-text">Buenos d&iacute;as, </span><span id="user-greeting"></span></h1>
     </header>
 
-    <!-- Tarjetas  del header -->
+    <!-- Tarjetas de indicadores -->
     <section class="stats">
       <div class="card-stats">
         <div class="card-green"></div>
         <h3>Citas de hoy</h3>
-        <div class="stat-number" id="stat-citas-hoy">5</div>
-        <p class="detail" id="stat-citas-detalle">2 presenciales · 3 en línea</p>
+        <div class="stat-number" id="stat-citas-hoy">0</div>
+        <p class="detail" id="stat-citas-detalle">&nbsp;</p>
       </div>
 
       <div class="card-stats">
         <div class="card-green"></div>
         <h3>Alumnos en seguimiento</h3>
-        <div class="stat-number" id="stat-alumnos-seguimiento">19</div>
+        <div class="stat-number" id="stat-alumnos-seguimiento">0</div>
         <p class="detail" id="stat-seguimiento-detalle">Periodo 2026-2</p>
       </div>
 
       <div class="card-stats">
         <div class="card-red"></div>
         <h3>Casos prioritarios</h3>
-        <div class="stat-number" id="stat-casos-prioritarios">3</div>
-        <p class="detail" id="stat-prioritarios-detalle">Requieren atención esta semana</p>
+        <div class="stat-number" id="stat-casos-prioritarios">0</div>
+        <p class="detail" id="stat-prioritarios-detalle">Requieren atenci&oacute;n esta semana</p>
       </div>
 
       <div class="card-stats">
         <div class="card-yellow"></div>
         <h3>Justificantes pendientes</h3>
-        <div class="stat-number" id="stat-justificantes">10</div>
+        <div class="stat-number" id="stat-justificantes">0</div>
         <p class="detail" id="stat-justificantes-detalle">Solicitudes por revisar</p>
       </div>
     </section>
 
-    <!-- Panel de informacion (Citas y Casos prioritarios) -->
+    <!-- Paneles de citas y casos prioritarios -->
     <section class="content">
 
-      <!-- Panel de Citas de hoy -->
       <div class="panel">
         <div class="panel-header">
           <h2>Citas de hoy</h2>
           <a href="#" class="link">Ver Agenda</a>
         </div>
-
-        <!-- Contenedor de citas: ejemplos para poder modificar css-->
         <div class="list-container" id="citas-container">
-          <div class="list-item">
-            <div class="time">09:00</div>
-            <div class="info">
-              <h4>Juan Pérez Martínez</h4>
-              <p>1234567 · Ing. Software · Seguimiento académico</p>
-            </div>
-            <div class="tag">Presencial</div>
-          </div>
-
-          <div class="list-item">
-            <div class="time">10:30</div>
-            <div class="info">
-              <h4>María Sánchez Ruiz</h4>
-              <p>1245789 · Bioingeniería · Situación personal</p>
-            </div>
-            <div class="tag">En línea</div>
-          </div>
+          <p class="empty-state">Cargando citas...</p>
         </div>
       </div>
 
-      <!-- Panel de Casos prioritarios -->
       <div class="cases-panel">
         <div class="panel-header">
           <h2>Casos prioritarios</h2>
           <a href="../estudiantes/estudiantes.html" class="link">Ver todos</a>
         </div>
-
-        <!-- Deje 2 ejemplos igual para que peudas modificar el css -->
+        <p class="home-message" id="home-message" role="status" aria-live="polite"></p>
         <div class="list-container" id="casos-container">
-          <div class="case-item">
-            <div class="info">
-              <h4>J.P.M · 1234567</h4>
-              <p>Crisis emocional · hace 2 días</p>
-            </div>
-            <div class="actions">
-              <span class="priority-badge priority-high"><i class="circle"></i> Prioridad Alta</span>
-              <button class="btn-outline" type="button"><i class="row"></i> Canalizar</button>
-            </div>
-          </div>
-
-          <div class="case-item">
-            <div class="info">
-              <h4>M.S.R · 1245789</h4>
-              <p>Seguimiento académico · hace 3 días</p>
-            </div>
-            <div class="actions">
-              <span class="priority-badge priority-med"><i class="circle"></i> Seguimiento</span>
-              <button class="btn-outline" type="button"><i class="row"></i> Canalizar</button>
-            </div>
-          </div>
+          <p class="empty-state">Cargando casos...</p>
         </div>
       </div>
 

@@ -9,7 +9,8 @@ async function refreshAvailability(){availabilityLoaded=false;hora='';document.q
 dateInput.addEventListener('change',refreshAvailability);
 function localDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 dateInput.min=localDate(new Date());
-for(let h=8;h<=16;h++)for(let m of [0,30]){if(h===16&&m===30)continue;const t=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;const b=document.createElement('button');b.type='button';b.className='hour';b.dataset.time=t;b.disabled=true;b.textContent=t;b.onclick=()=>{hora=t;document.querySelectorAll('.hour').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');V.clearError($('#hours'))};$('#hours').append(b)}
+// Solo hay tres horarios de atencion al dia
+for(const t of ['09:00','11:00','13:00']){const b=document.createElement('button');b.type='button';b.className='hour';b.dataset.time=t;b.disabled=true;b.textContent=t;b.onclick=()=>{hora=t;document.querySelectorAll('.hour').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');V.clearError($('#hours'))};$('#hours').append(b)}
 function show(n){step=n;document.querySelectorAll('.step').forEach(el=>el.classList.toggle('active',Number(el.dataset.step)===n));$('#bar').style.width=`${Math.min(n,4)*25}%`;window.scrollTo(0,0)}
 document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{motivo=b.dataset.value;document.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');updateDetalleLabel()});
 document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{modalidad=b.dataset.value;document.querySelectorAll('.mode').forEach(x=>x.classList.remove('selected'));b.classList.add('selected')});
@@ -30,7 +31,11 @@ V.bindGeneric(F.correo,vAlumno.correo);V.bindGeneric(F.carrera,vAlumno.carrera);
 function validateAlumno(){return V.validateAll(Object.keys(F).map(k=>({input:F[k],validate:vAlumno[k]}))).length===0}
 $('#alumnoForm').addEventListener('input',()=>{$('#accountError').textContent=''});
 $('#loginStudentForm').addEventListener('input',()=>{$('#loginError').textContent=''});
-function lockAlumnoForm(on){Object.values(F).forEach(i=>i.readOnly=on);$('#lockedNote').hidden=!on;document.querySelector('[data-step="1"] .next').textContent=on?'Continuar':'Crear cuenta y continuar'}
+// Catalogo de carreras (tabla majors), con los mismos grupos que Aspirantes
+async function loadMajors(){const sel=F.carrera;try{const r=await fetch('../../backend/majors_list.php',{cache:'no-store'});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.error);const opt=n=>{const o=document.createElement('option');o.value=o.textContent=n;return o};const group=(label,items)=>{const g=document.createElement('optgroup');g.label=label;g.append(...items.map(opt));return g};const names=d.majors.map(m=>m.name);const first=document.createElement('option');first.value='';first.textContent='Selecciona una carrera';sel.replaceChildren(first,group('Ingenieria',names.slice(0,10)),group('Arquitectura y Diseño',names.slice(10)))}catch(e){if(sel&&sel.options&&sel.options[0])sel.options[0].textContent='No se pudieron cargar las carreras'}}
+loadMajors();
+// Un select no respeta readOnly, por eso la carrera se bloquea con disabled
+function lockAlumnoForm(on){Object.values(F).forEach(i=>{i.readOnly=on;if(i.tagName==='SELECT')i.disabled=on});$('#lockedNote').hidden=!on;document.querySelector('[data-step="1"] .next').textContent=on?'Continuar':'Crear cuenta y continuar'}
 function goToGate(){verifiedStudent=null;cameFromLogin=false;lockAlumnoForm(false);document.querySelectorAll('.step').forEach(x=>x.classList.remove('active'));$('#accountGate').hidden=false;$('#bar').style.width='0'}
 const vDetalle=()=>motivo==='Otro'?V.requerido($('#detalle').value,'La descripción es obligatoria cuando eliges «Otro»: cuéntanos brevemente tu situación.'):'';
 function validateDetalle(){return V.validateAll([{input:$('#detalle'),validate:vDetalle}]).length===0}

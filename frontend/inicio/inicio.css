@@ -408,3 +408,31 @@ h1, h2, h3, h4, p {
     display: none;
   }
 }
+
+/* Mensaje cuando una lista no tiene elementos */
+.empty-state {
+  padding: 24px 12px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Confirmacion despues de canalizar un caso */
+.home-message {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--green-100);
+  color: var(--green-900);
+  font-size: 13px;
+}
+
+.home-message:empty {
+  display: none;
+}
+
+
+/* Cerrar sesion queda al fondo del menu lateral */
+.nav-item--logout {
+  margin-top: auto;
+}
