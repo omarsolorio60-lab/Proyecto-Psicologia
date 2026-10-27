@@ -78,7 +78,7 @@ if (empty($_SESSION['csrf_citas'])) {
                     autocomplete="email">
                 <label for="telefono">Teléfono (10 dígitos)</label><input id="telefono" name="telefono" type="tel"
                     required autocomplete="tel" placeholder="Ej. 6641234567">
-                <label for="carrera">Carrera</label><input id="carrera" name="carrera" maxlength="120" required placeholder="Ej. Ingeniería en Software">
+                <label for="carrera">Carrera</label><select id="carrera" name="carrera" required><option value="">Cargando carreras...</option></select>
                 <label for="semestre">Semestre</label><input id="semestre" name="semestre" type="number"
                     min="1" max="20" required>
                 <p class="hint">Todos los campos son obligatorios. Tus datos se guardarán una sola vez. Si ya tienes cuenta, vuelve y selecciona «Ya tengo
@@ -142,7 +142,7 @@ if (empty($_SESSION['csrf_citas'])) {
         </div>
     </div>
     <script src="../shared/validation.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
 </body>
 
 </html>

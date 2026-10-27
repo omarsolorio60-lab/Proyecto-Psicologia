@@ -148,3 +148,9 @@ h2 { margin: 0; font-size: 20px; color: var(--green-900); }
   .main { margin-left: 0; padding: 20px 16px; }
   .form-row { grid-template-columns: 1fr; }
 }
+
+
+/* Cerrar sesion queda al fondo del menu lateral */
+.nav-item--logout {
+  margin-top: auto;
+}

@@ -23,3 +23,17 @@ document.getElementById("loginForm").addEventListener("submit", (e) => {
       "Completa los campos e ingresa un correo @uabc.edu.mx válido.";
   }
 });
+
+
+// Mensaje de error cuando admin_login.php regresa con ?error=...
+const LOGIN_ERRORS = {
+  datos: "Completa los campos e ingresa un correo @uabc.edu.mx v\u00e1lido.",
+  credenciales: "Correo o contrase\u00f1a incorrectos.",
+  servidor: "No se pudo conectar con el servidor. Intenta de nuevo."
+};
+const loginError = new URLSearchParams(window.location.search).get("error");
+if (loginError && LOGIN_ERRORS[loginError]) {
+  selector.hidden = true;
+  adminPanel.hidden = false;
+  document.getElementById("mensaje").textContent = LOGIN_ERRORS[loginError];
+}

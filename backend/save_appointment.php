@@ -53,7 +53,8 @@ if (!is_string($fecha) || !is_string($hora) || !is_string($modalidad) || !is_str
 $detalle = trim($detalle);
 $dt = DateTimeImmutable::createFromFormat('!Y-m-d H:i', "$fecha $hora");
 $validDate = $dt && $dt->format('Y-m-d H:i') === "$fecha $hora" && $dt > new DateTimeImmutable('now');
-$validHour = (bool) preg_match('/^(0[8-9]|1[0-5]):(00|30)$|^16:00$/D', $hora);
+// Solo hay tres horarios de atencion al dia: 09:00, 11:00 y 13:00
+$validHour = in_array($hora, ['09:00', '11:00', '13:00'], true);
 if (!$validDate || !$validHour || !in_array($modalidad, ['Presencial', 'Virtual'], true) || !in_array($motivo, ['Académico', 'Personal o emocional', 'Orientación vocacional', 'Justificante', 'Otro'], true) || strlen($detalle) > 180)
     fail('Revisa el motivo, modalidad, fecha y horario.');
 $texto = $motivo . ($detalle !== '' ? ' - ' . $detalle : '');
