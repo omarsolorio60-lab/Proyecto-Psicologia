@@ -6,9 +6,9 @@
   <title>Estudiantes | SIGEP</title>
   <link rel="stylesheet" href="estudiantes.css">
   <link rel="stylesheet" href="../shared/validation.css">
-  <script src="mock-estudiantes.js" defer></script>
+  <script src="../shared/api.js" defer></script>
   <script src="../shared/validation.js" defer></script>
-  <script src="estudiantes.js" defer></script>
+  <script src="estudiantes.js?v=4" defer></script>
 </head>
 <body>
   <!-- Sidebar -->
@@ -25,7 +25,8 @@
     <a class="nav-item nav-item--active" href="estudiantes.html" aria-current="page">Estudiantes</a>
     <a class="nav-item" href="#">Justificantes</a>
     <a class="nav-item" href="#">Reportes</a>
-    <a class="nav-item" href="#">Aspirantes</a>
+    <a class="nav-item" href="../aspirantes/aspirantes.html">Aspirantes</a>
+    <a class="nav-item nav-item--logout" href="../../backend/admin_logout.php">Cerrar sesi&oacute;n</a>
   </nav>
 
   <main class="main">
@@ -134,7 +135,17 @@
         </div>
         <div class="field">
           <label for="fullName">Nombre completo *</label>
-          <input id="fullName" name="fullName" maxlength="150" required>
+          <input id="fullName" name="fullName" maxlength="150" required placeholder="Nombre(s) y apellidos">
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="email">Correo institucional *</label>
+            <input id="email" name="email" type="email" maxlength="150" required placeholder="nombre@uabc.edu.mx">
+          </div>
+          <div class="field">
+            <label for="phone">Teléfono (10 dígitos) *</label>
+            <input id="phone" name="phone" type="tel" required placeholder="Ej. 6641234567" autocomplete="tel">
+          </div>
         </div>
         <div class="form-row">
           <div class="field">
