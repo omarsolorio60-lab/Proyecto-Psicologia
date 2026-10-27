@@ -1,12 +1,12 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
-// Solo acepta POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['ok' => false, 'error' => 'Método no permitido.']);
     exit;
 }
+
 $data = json_decode(file_get_contents('php://input'), true);
 if (!is_array($data)) {
     http_response_code(400);
@@ -62,15 +62,14 @@ try {
     ]);
 
 } catch (PDOException $e) {
-    // Correo duplicado (UNIQUE KEY)
     if ($e->getCode() === '23000') {
         http_response_code(409);
-        echo json_encode(['ok' => false, 'error' => 'Este correo ya esta registrado. Ya te habías registrado antes?']);
+        echo json_encode(['ok' => false, 'error' => 'Este correo ya está registrado.']);
         exit;
     }
     error_log('SIGEP aspirante: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['ok' => false, 'error' => 'Error al guardar. Intenta de nuevo más tarde.']);
+    echo json_encode(['ok' => false, 'error' => 'Error al guardar en la base de datos.']);
 } catch (Throwable $e) {
     error_log('SIGEP aspirante: ' . $e->getMessage());
     http_response_code(500);

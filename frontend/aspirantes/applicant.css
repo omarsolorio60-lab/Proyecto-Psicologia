@@ -179,6 +179,32 @@ body {
     transition: background-color 0.2s;
 }
 
+.form-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.btn-regresar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px;
+    border: 1px solid #00733F;
+    border-radius: 6px;
+    background: #fff;
+    color: #00733F;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.btn-regresar:hover {
+    background-color: #e3f6ea;
+}
+
 .btn-submit:hover {
     background-color: #005d34;
 }

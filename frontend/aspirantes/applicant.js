@@ -1,4 +1,3 @@
-// Control del menu lateral
 function ToggleEvent() {
     const sidebar = document.getElementById("sidebar");
     if (sidebar) {
@@ -6,7 +5,6 @@ function ToggleEvent() {
     }
 }
 
-// Manejo del formulario de registro de aspirantes
 const form = document.getElementById("aspirant-form");
 const registrationView = document.getElementById("registration-view");
 const successView = document.getElementById("succes");
@@ -25,9 +23,9 @@ if (form) {
         const nombre = nombreInput.value.trim();
         const preparatoria = prepInput.value.trim();
         const correo = correoInput.value.trim();
-        const carrera = carreraSelect.options[carreraSelect.selectedIndex].text;
+        const carrera = carreraSelect.value;
 
-        if (!nombre || !preparatoria || !correo || !carreraSelect.value) {
+        if (!nombre || !preparatoria || !correo || !carrera) {
             alert("Por favor completa todos los campos.");
             return;
         }
@@ -62,18 +60,17 @@ if (form) {
             const result = await response.json();
 
             if (result.ok) {
-                console.log("¡Aspirante registrado en BD con ID:", result.id);
                 registrationView.style.display = "none";
                 successView.style.display = "block";
             } else {
-                alert("Error" + (result.error ?? "Ocurrió un error. Intenta de nuevo."));
+                alert("⚠️ " + (result.error ?? "Ocurrió un error. Intenta de nuevo."));
                 btnSubmit.disabled = false;
                 btnSubmit.textContent = "Registrarme";
             }
 
         } catch (err) {
             console.error("Error de red:", err);
-            alert("Error de conexion");
+            alert("Error de conexión. Verifica que el servidor XAMPP esté activo.");
             btnSubmit.disabled = false;
             btnSubmit.textContent = "Registrarme";
         }
