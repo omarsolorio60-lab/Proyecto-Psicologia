@@ -1,0 +1,410 @@
+/* ===== Variables de diseno (misma paleta que estudiantes / Figma) ===== */
+:root {
+  --green-900: #004d2a;
+  --green-700: #00723f;
+  --green-600: #00894b;
+  --green-100: #ddefe4;
+  --gold: #dd971a;
+  --gold-600: #b87a0e;
+  --gold-100: #fbefd6;
+  --red: #c62828;
+  --red-100: #fde7e7;
+  --text: #1c2620;
+  --text-muted: #6f7a74;
+  --bg: #f2f8f4;
+  --surface: #ffffff;
+  --border: #d5ddd8;
+  --radius: 12px;
+  --shadow: 0 6px 18px rgba(25, 61, 40, 0.06);
+  --sidebar-width: 240px;
+
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+h1, h2, h3, h4, p {
+  margin: 0;
+}
+
+/* ===== Menu lateral (igual que estudiantes) ===== */
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 24px 16px;
+  background: var(--green-900);
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px 24px;
+  color: #fff;
+}
+
+.sidebar__brand strong {
+  display: block;
+  font-size: 16px;
+}
+
+.sidebar__brand span {
+  display: block;
+  font-size: 12px;
+  color: var(--green-100);
+}
+
+.sidebar__logo {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--gold);
+  color: var(--green-900);
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.nav-item {
+  padding: 11px 14px;
+  border-radius: 8px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  opacity: 0.85;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.nav-item:hover {
+  background: var(--green-700);
+  opacity: 1;
+}
+
+/* Opcion activa: verde claro con franja dorada a la izquierda */
+.nav-item--active {
+  background: var(--green-600);
+  opacity: 1;
+  font-weight: bold;
+  box-shadow: inset 4px 0 0 var(--gold);
+}
+
+/* Contorno visible al navegar con teclado */
+.nav-item:focus-visible,
+.link:focus-visible,
+.btn-outline:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ===== Area principal ===== */
+.main {
+  margin-left: var(--sidebar-width);
+  padding: 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.header .date {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.header h1 {
+  font-size: 30px;
+  color: var(--green-900);
+}
+
+/* ===== Tarjetas de estadisticas ===== */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.card-stats {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 20px 18px;
+  box-shadow: var(--shadow);
+}
+
+/* Franja de color en la parte superior de la tarjeta */
+.card-green,
+.card-red,
+.card-yellow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.card-green  { background: var(--green-600); }
+.card-red    { background: var(--red); }
+.card-yellow { background: var(--gold); }
+
+.card-stats h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.stat-number {
+  font-size: 34px;
+  font-weight: bold;
+  color: var(--green-900);
+  margin: 8px 0 4px;
+}
+
+.card-stats .detail {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ===== Paneles ===== */
+.content {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.panel,
+.cases-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--shadow);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.panel-header h2 {
+  font-size: 20px;
+  color: var(--green-900);
+}
+
+.link {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--green-700);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Fila de cita */
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.list-item .time {
+  min-width: 56px;
+  font-weight: bold;
+  font-size: 15px;
+  color: var(--green-700);
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.info h4 {
+  font-size: 14px;
+  color: var(--green-900);
+  margin-bottom: 3px;
+}
+
+/* Corta el texto largo con puntos suspensivos en lugar de romper la fila */
+.info p {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Etiqueta de modalidad (Presencial / En linea) */
+.tag {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--green-100);
+  color: var(--green-700);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* Fila de caso prioritario */
+.case-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Etiqueta de prioridad */
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* Punto que toma el color del texto de la etiqueta */
+.priority-badge .circle {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.priority-high {
+  background: var(--red-100);
+  color: var(--red);
+}
+
+.priority-med {
+  background: var(--gold-100);
+  color: var(--gold-600);
+}
+
+/* Boton "Canalizar" */
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1.5px solid var(--green-700);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--green-700);
+  font-size: 12px;
+  font-weight: bold;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-outline:hover {
+  background: var(--green-100);
+}
+
+/* Flecha para el icono vacio del boton; borrar si se usa un SVG */
+.btn-outline .row::before {
+  content: "\2192";
+  font-style: normal;
+}
+
+/* ===== Adaptacion a pantallas ===== */
+
+/* Tabletas: 2 tarjetas por fila y paneles apilados */
+@media (max-width: 1100px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Pantallas medianas: el menu lateral pasa a barra superior */
+@media (max-width: 800px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 12px 16px;
+  }
+
+  .sidebar__brand {
+    width: 100%;
+    padding: 0 0 8px;
+  }
+
+  .nav-item {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .nav-item--active {
+    box-shadow: inset 0 -3px 0 var(--gold);
+  }
+
+  .main {
+    margin-left: 0;
+    padding: 24px 16px;
+  }
+}
+
+/* Celulares: 1 tarjeta por fila */
+@media (max-width: 520px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .case-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .list-item .tag {
+    display: none;
+  }
+}
