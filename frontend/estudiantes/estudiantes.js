@@ -329,11 +329,6 @@ $("#students-body").addEventListener("keydown", (event) => {
   if (row && event.key === "Enter") openRecord(row.dataset.id);
 });
 
-// Export (placeholder until reports exist)
-$("#export-button").addEventListener("click", () => {
-  alert("La exportación estará disponible en el sprint de Reportes.");
-});
-
 // ===== Register student modal (HU-02) =====
 const modal = $("#register-modal");
 const form = $("#register-form");

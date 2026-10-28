@@ -17,7 +17,56 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 -- -------------------------------------------------------------
 -- Estructura
 -- -------------------------------------------------------------
+DROP TABLE IF EXISTS `appointments`;
+DROP TABLE IF EXISTS `cases`;
 DROP TABLE IF EXISTS `applicants`;
+DROP TABLE IF EXISTS `students`;
+DROP TABLE IF EXISTS `appointment_slots`;
+DROP TABLE IF EXISTS `psychologists`;
+DROP TABLE IF EXISTS `majors`;
+
+CREATE TABLE `majors` (
+  `major_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(120) NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`major_id`),
+  UNIQUE KEY `uq_majors_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `psychologists` (
+  `psychologist_id` int(11) NOT NULL AUTO_INCREMENT,
+  `full_name` varchar(150) NOT NULL,
+  `institutional_email` varchar(150) DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `password_hash` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`psychologist_id`),
+  UNIQUE KEY `institutional_email` (`institutional_email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `appointment_slots` (
+  `slot_date` datetime NOT NULL,
+  PRIMARY KEY (`slot_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `students` (
+  `student_id` int(11) NOT NULL AUTO_INCREMENT,
+  `student_number` varchar(20) NOT NULL,
+  `first_name` varchar(100) NOT NULL,
+  `paternal_last_name` varchar(100) NOT NULL,
+  `maternal_last_name` varchar(100) DEFAULT NULL,
+  `institutional_email` varchar(150) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `major` varchar(120) DEFAULT NULL,
+  `major_id` int(11) DEFAULT NULL,
+  `semester` tinyint(3) unsigned DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`student_id`),
+  UNIQUE KEY `student_number` (`student_number`),
+  UNIQUE KEY `institutional_email` (`institutional_email`),
+  KEY `idx_students_major` (`major_id`),
+  CONSTRAINT `fk_students_majors` FOREIGN KEY (`major_id`) REFERENCES `majors` (`major_id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE `applicants` (
   `applicant_id` int(11) NOT NULL AUTO_INCREMENT,
   `full_name` varchar(150) NOT NULL,
@@ -31,12 +80,7 @@ CREATE TABLE `applicants` (
   KEY `idx_applicants_major` (`major_id`),
   CONSTRAINT `fk_applicants_majors` FOREIGN KEY (`major_id`) REFERENCES `majors` (`major_id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-DROP TABLE IF EXISTS `appointment_slots`;
-CREATE TABLE `appointment_slots` (
-  `slot_date` datetime NOT NULL,
-  PRIMARY KEY (`slot_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-DROP TABLE IF EXISTS `appointments`;
+
 CREATE TABLE `appointments` (
   `appointment_id` int(11) NOT NULL AUTO_INCREMENT,
   `student_id` int(11) NOT NULL,
@@ -59,7 +103,7 @@ CREATE TABLE `appointments` (
   CONSTRAINT `fk_appointments_psychologists` FOREIGN KEY (`psychologist_id`) REFERENCES `psychologists` (`psychologist_id`),
   CONSTRAINT `fk_appointments_students` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-DROP TABLE IF EXISTS `cases`;
+
 CREATE TABLE `cases` (
   `case_id` int(11) NOT NULL AUTO_INCREMENT,
   `student_id` int(11) NOT NULL,
@@ -76,44 +120,6 @@ CREATE TABLE `cases` (
   CONSTRAINT `fk_cases_psychologists` FOREIGN KEY (`psychologist_id`) REFERENCES `psychologists` (`psychologist_id`),
   CONSTRAINT `fk_cases_students` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-DROP TABLE IF EXISTS `majors`;
-CREATE TABLE `majors` (
-  `major_id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(120) NOT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`major_id`),
-  UNIQUE KEY `uq_majors_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-DROP TABLE IF EXISTS `psychologists`;
-CREATE TABLE `psychologists` (
-  `psychologist_id` int(11) NOT NULL AUTO_INCREMENT,
-  `full_name` varchar(150) NOT NULL,
-  `institutional_email` varchar(150) DEFAULT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT 1,
-  `password_hash` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`psychologist_id`),
-  UNIQUE KEY `institutional_email` (`institutional_email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-DROP TABLE IF EXISTS `students`;
-CREATE TABLE `students` (
-  `student_id` int(11) NOT NULL AUTO_INCREMENT,
-  `student_number` varchar(20) NOT NULL,
-  `first_name` varchar(100) NOT NULL,
-  `paternal_last_name` varchar(100) NOT NULL,
-  `maternal_last_name` varchar(100) DEFAULT NULL,
-  `institutional_email` varchar(150) NOT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `major` varchar(120) DEFAULT NULL,
-  `major_id` int(11) DEFAULT NULL,
-  `semester` tinyint(3) unsigned DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`student_id`),
-  UNIQUE KEY `student_number` (`student_number`),
-  UNIQUE KEY `institutional_email` (`institutional_email`),
-  KEY `idx_students_major` (`major_id`),
-  CONSTRAINT `fk_students_majors` FOREIGN KEY (`major_id`) REFERENCES `majors` (`major_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 
 
 -- -------------------------------------------------------------
