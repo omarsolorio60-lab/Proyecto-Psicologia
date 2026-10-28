@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Estudiantes | SIGEP</title>
   <link rel="stylesheet" href="estudiantes.css">
-  <script src="mock-estudiantes.js" defer></script>
-  <script src="estudiantes.js" defer></script>
+  <link rel="stylesheet" href="../shared/validation.css">
+  <script src="../shared/api.js" defer></script>
+  <script src="../shared/validation.js" defer></script>
+  <script src="estudiantes.js?v=4" defer></script>
 </head>
 <body>
   <!-- Sidebar -->
@@ -18,12 +20,13 @@
         <span>FCITEC · UABC</span>
       </div>
     </div>
-    <a class="nav-item" href="#">Inicio</a>
+    <a class="nav-item" href="../inicio/inicio.html">Inicio</a>
     <a class="nav-item" href="#">Agenda</a>
     <a class="nav-item nav-item--active" href="estudiantes.html" aria-current="page">Estudiantes</a>
     <a class="nav-item" href="#">Justificantes</a>
     <a class="nav-item" href="#">Reportes</a>
-    <a class="nav-item" href="#">Aspirantes</a>
+    <a class="nav-item" href="../aspirantes/aspirantes.html">Aspirantes</a>
+    <a class="nav-item nav-item--logout" href="../../backend/admin_logout.php">Cerrar sesi&oacute;n</a>
   </nav>
 
   <main class="main">
@@ -118,7 +121,7 @@
         <div class="form-row">
           <div class="field">
             <label for="enrollment">Matrícula *</label>
-            <input id="enrollment" name="enrollment" inputmode="numeric" maxlength="10" required>
+            <input id="enrollment" name="enrollment" required placeholder="Ej. 1270021">
           </div>
           <div class="field">
             <label for="sex">Sexo *</label>
@@ -132,7 +135,17 @@
         </div>
         <div class="field">
           <label for="fullName">Nombre completo *</label>
-          <input id="fullName" name="fullName" maxlength="150" required>
+          <input id="fullName" name="fullName" maxlength="150" required placeholder="Nombre(s) y apellidos">
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="email">Correo institucional *</label>
+            <input id="email" name="email" type="email" maxlength="150" required placeholder="nombre@uabc.edu.mx">
+          </div>
+          <div class="field">
+            <label for="phone">Teléfono (10 dígitos) *</label>
+            <input id="phone" name="phone" type="tel" required placeholder="Ej. 6641234567" autocomplete="tel">
+          </div>
         </div>
         <div class="form-row">
           <div class="field">

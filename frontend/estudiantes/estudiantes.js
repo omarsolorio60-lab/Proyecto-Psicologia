@@ -5,6 +5,29 @@
 const PAGE_SIZE = 8;
 const CURRENT_PSYCHOLOGIST = "A. López"; // TODO: take it from the session when login exists
 
+// Catalogs (PROGRAMS and PSYCHOLOGISTS are filled from the backend at start)
+let PROGRAMS = [];
+let PSYCHOLOGISTS = [];
+let students = [];
+
+// cases.reason in the database -> text shown on the page
+const REASON_LABELS = {
+  academic: "Académico",
+  personal: "Personal o emocional",
+  vocational: "Orientación vocacional",
+  excuse: "Justificante",
+};
+const REASONS = Object.values(REASON_LABELS);
+
+const STATUS_LABELS = {
+  first_attention: "Primera atención",
+  follow_up: "En seguimiento",
+  referred: "Canalizado",
+  closed: "Cerrado",
+};
+
+const PRIORITY_LABELS = { high: "Prioridad alta", medium: "Prioridad media", stable: "Estable" };
+
 const state = {
   view: "all",          // saved view (tab)
   search: "",
@@ -201,6 +224,16 @@ function render() {
 
 // Fill the <select> options from the catalogs
 function fillSelect(select, values, firstOption) {
+  // El selector de carrera del registro usa los mismos grupos que Aspirantes.
+  if (select.id === "program") {
+    const engineering = values.slice(0, 10);
+    const design = values.slice(10);
+    const group = (label, items) => `<optgroup label="${label}">${items.map((v) => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("")}</optgroup>`;
+    select.innerHTML = (firstOption ? `<option value="">${firstOption}</option>` : "")
+      + group("Ingenieria", engineering)
+      + group("Arquitectura y Diseño", design);
+    return;
+  }
   const options = values.map((v) => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
   select.innerHTML = (firstOption ? `<option value="">${firstOption}</option>` : "") + options;
 }
@@ -323,49 +356,83 @@ function showFormError(message) {
 function hideFormError() {
   $("#form-error").hidden = true;
   form.querySelectorAll(".field--error").forEach((f) => f.classList.remove("field--error"));
+  SIGEP_VALID.clearAll(form);
 }
 
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  hideFormError();
+// Validadores por campo: cada mensaje indica cual campo fallo
+const V = SIGEP_VALID;
+const validators = {
+  enrollment: () => V.matricula($("#enrollment").value),
+  sex: () => V.requerido($("#sex").value, "Selecciona el sexo."),
+  fullName: () => V.nombre($("#fullName").value, "El nombre completo")
+    || ($("#fullName").value.trim().split(/\s+/).length < 2 ? "Escribe el nombre y al menos un apellido." : ""),
+  email: () => V.correo($("#email").value, { uabc: true }),
+  phone: () => V.telefono($("#phone").value),
+  program: () => V.requerido($("#program").value, "Selecciona la carrera."),
+  semester: () => V.semestre($("#semester").value, 12),
+  reason: () => V.requerido($("#reason").value, "Selecciona el motivo de atención."),
+  psychologist: () => V.requerido($("#psychologist").value, "Selecciona la psicóloga."),
+};
 
-  // Criteria 2 and 3: required fields must be filled before saving
-  const missing = [...form.querySelectorAll("[required]")].filter((input) => input.value.trim() === "");
-  if (missing.length > 0) {
-    missing.forEach((input) => input.closest(".field").classList.add("field--error"));
-    showFormError("Completa los campos obligatorios.");
-    missing[0].focus();
+V.bindMatricula($("#enrollment"));
+V.bindNombre($("#fullName"), "El nombre completo");
+V.bindTelefono($("#phone"));
+["sex", "email", "program", "semester", "reason", "psychologist"].forEach((id) => V.bindGeneric($(`#${id}`), validators[id]));
+
+// Students and catalogs from the backend (students_list.php)
+async function loadStudents() {
+  const list = await getJson("students_list.php");
+  students = list.students.map((s) => ({ ...s, reason: REASON_LABELS[s.reason] ?? s.reason }));
+  PSYCHOLOGISTS = list.psychologists;
+}
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  $("#form-error").hidden = true;
+  form.querySelectorAll(".field--error").forEach((f) => f.classList.remove("field--error"));
+
+  // Todos los campos son obligatorios y se validan uno por uno
+  const items = Object.keys(validators).map((id) => ({ input: $(`#${id}`), validate: validators[id] }));
+  const errors = V.validateAll(items);
+
+  // La matrícula no puede estar repetida
+  if (!errors.length && students.some((s) => s.enrollment === $("#enrollment").value.trim())) {
+    V.setError($("#enrollment"), "La matrícula ya está registrada.");
+    $("#enrollment").focus();
+    errors.push("La matrícula ya está registrada.");
+  }
+
+  if (errors.length > 0) {
+    items.forEach((it) => { if (it.input.classList.contains("input-invalid")) it.input.closest(".field").classList.add("field--error"); });
+    const fields = items.filter((it) => it.input.classList.contains("input-invalid")).map((it) => it.input.closest(".field").querySelector("label").textContent.replace(" *", ""));
+    showFormError(`Corrige los campos marcados: ${fields.join(", ")}.`);
     return;
   }
 
   const data = Object.fromEntries(new FormData(form));
+  const reasonCode = Object.keys(REASON_LABELS).find((code) => REASON_LABELS[code] === data.reason);
 
-  if (!/^\d{7,10}$/.test(data.enrollment)) {
-    $("#enrollment").closest(".field").classList.add("field--error");
-    showFormError("La matrícula debe tener de 7 a 10 dígitos.");
+  // Criterion 1: save the student's general data (students + a new case)
+  const saveButton = form.querySelector('button[type="submit"]');
+  saveButton.disabled = true;
+  try {
+    await postJson("create_student.php", {
+      enrollment: data.enrollment.trim(),
+      fullName: data.fullName.trim(),
+      email: data.email.trim(),
+      phone: data.phone.trim(),
+      program: data.program,
+      semester: Number(data.semester),
+      reason: reasonCode,
+      psychologist: data.psychologist,
+    });
+    await loadStudents();
+  } catch (error) {
+    showFormError(error.message);
     return;
+  } finally {
+    saveButton.disabled = false;
   }
-  if (students.some((s) => s.enrollment === data.enrollment)) {
-    $("#enrollment").closest(".field").classList.add("field--error");
-    showFormError("Esta matrícula ya está registrada.");
-    return;
-  }
-
-  // Criterion 1: save the student's general data
-  students.push({
-    id: Date.now(),
-    enrollment: data.enrollment,
-    name: data.fullName.trim(),
-    program: data.program,
-    semester: Number(data.semester),
-    priority: "stable",
-    reason: data.reason,
-    psychologist: data.psychologist,
-    lastSession: null,
-    nextAppointment: null,
-    status: "first_attention",
-    category: data.reason === "Académico" ? "academic" : "emotional",
-  });
 
   modal.close();
   state.view = "all";
@@ -374,10 +441,26 @@ form.addEventListener("submit", (event) => {
 });
 
 // ===== 5) Start =====
-fillSelect($("#filter-program"), PROGRAMS, "Carrera");
-fillSelect($("#filter-reason"), REASONS, "Motivo");
-fillSelect($("#filter-psychologist"), PSYCHOLOGISTS, "Psicóloga");
-fillSelect($("#program"), PROGRAMS, "Selecciona");
-fillSelect($("#reason"), REASONS, "Selecciona");
-fillSelect($("#psychologist"), PSYCHOLOGISTS, "Selecciona");
-render();
+async function init() {
+  let loadError = null;
+  try {
+    const [catalog] = await Promise.all([getJson("majors_list.php"), loadStudents()]);
+    PROGRAMS = catalog.majors.map((m) => m.name);
+  } catch (error) {
+    loadError = error;
+  }
+
+  fillSelect($("#filter-program"), PROGRAMS, "Carrera");
+  fillSelect($("#filter-reason"), REASONS, "Motivo");
+  fillSelect($("#filter-psychologist"), PSYCHOLOGISTS, "Psicóloga");
+  fillSelect($("#program"), PROGRAMS, "Selecciona");
+  fillSelect($("#reason"), REASONS, "Selecciona");
+  fillSelect($("#psychologist"), PSYCHOLOGISTS, "Selecciona");
+  render();
+
+  if (loadError) {
+    $("#students-body").innerHTML = `<tr class="empty-row"><td colspan="8">${escapeHtml(loadError.message)}</td></tr>`;
+  }
+}
+
+init();
