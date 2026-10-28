@@ -3,7 +3,6 @@
 // Respuesta: { ok, staff, otherStaff, stats, appointments, cases }
 
 header('Content-Type: application/json; charset=utf-8');
-header('Content-Type: application/json; charset=utf-8');
 require __DIR__ . '/admin_session.php';
 $me = requirePsychologist();
 require __DIR__ . '/../config/database_connection.php';

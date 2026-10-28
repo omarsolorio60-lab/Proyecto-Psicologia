@@ -30,8 +30,12 @@ $sem = $d['semestre'];
 if (!ctype_digit($sem) || (int) $sem < 1 || (int) $sem > 20)
     studentFail('El semestre debe ser un número entre 1 y 20.');
 try {
-    $q = $pdo->prepare('INSERT INTO students (student_number,first_name,paternal_last_name,maternal_last_name,institutional_email,phone,major,semester) VALUES (?,?,?,?,?,?,?,?)');
-    $q->execute([$d['matricula'], $d['nombre'], $d['apellido_paterno'], $d['apellido_materno'], $d['correo_institucional'], $d['telefono'], $d['carrera'], (int) $sem]);
+    $mQ = $pdo->prepare('SELECT major_id FROM majors WHERE name = ? AND active = 1');
+    $mQ->execute([$d['carrera']]);
+    $majorId = $mQ->fetchColumn() ?: null;
+
+    $q = $pdo->prepare('INSERT INTO students (student_number, first_name, paternal_last_name, maternal_last_name, institutional_email, phone, major, major_id, semester) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $q->execute([$d['matricula'], $d['nombre'], $d['apellido_paterno'], $d['apellido_materno'], $d['correo_institucional'], $d['telefono'], $d['carrera'], $majorId, (int) $sem]);
     $_SESSION['student_id'] = (int) $pdo->lastInsertId();
     echo json_encode(['ok' => true, 'student' => array_intersect_key($d, array_flip(['matricula', 'nombre', 'apellido_paterno', 'apellido_materno', 'correo_institucional', 'telefono', 'carrera', 'semestre']))]);
 } catch (PDOException $ex) {

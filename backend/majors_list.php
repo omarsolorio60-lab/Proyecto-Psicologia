@@ -3,12 +3,13 @@
 // Respuesta: { ok: true, majors: [ { id, name }, ... ] }
 
 header('Content-Type: application/json; charset=utf-8');
-require __DIR__ . '/../config/database_connection.php';
 
 try {
+    require __DIR__ . '/../config/database_connection.php';
+
     $rows = $pdo->query(
         'SELECT major_id AS id, name FROM majors WHERE active = 1 ORDER BY major_id'
-    )->fetchAll();
+    )->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($rows as &$row) {
         $row['id'] = (int) $row['id'];
